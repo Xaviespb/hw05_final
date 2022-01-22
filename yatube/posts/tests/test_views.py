@@ -176,7 +176,8 @@ class PostPagesTests(TestCase):
         self.assertTrue(response.content)
 
     def test_follow_auth(self):
-        ''' Авторизированный пользователь может подписываться и отписываться '''
+        ''' Авторизированный пользователь может подписываться и отписываться
+        '''
         following = User.objects.create(username='following')
         profile_url_following = reverse('posts:profile_follow',
                                         kwargs={'username': 'following'})

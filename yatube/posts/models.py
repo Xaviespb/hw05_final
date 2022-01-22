@@ -57,7 +57,8 @@ class Comment(models.Model):
         related_name='comments'
     )
     text = models.TextField('Текст комментария')
-    created = models.DateTimeField('Дата публикации комментария', auto_now_add=True)
+    created = models.DateTimeField('Дата публикации комментария',
+                                   auto_now_add=True)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
