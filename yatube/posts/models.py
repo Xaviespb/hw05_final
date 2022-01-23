@@ -68,6 +68,9 @@ class Comment(models.Model):
     class Meta:
         verbose_name = "Comment"
 
+    def __str__(self) -> str:
+        return tw.shorten(str(self.text), 30)
+
 
 class Follow(models.Model):
     """ Модель для хранения подписок """
@@ -81,3 +84,12 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following'
     )
+
+    class Meta:
+        # сделал проверку, но еще есть проверка во вью
+        constraints = [
+            models.UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_list'
+            )
+        ]

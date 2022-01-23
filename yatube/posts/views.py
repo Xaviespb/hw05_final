@@ -19,7 +19,6 @@ def authorized_only(func):
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    # Домашняя страница
     post_list = Post.objects.all()
     paginator = Paginator(post_list, settings.PER_PAGE_PAGINATOR)
     page_number = request.GET.get('page')
@@ -34,7 +33,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def group_posts(request: HttpRequest, slug: str) -> HttpResponse:
-    # Страница постов группы
     group = get_object_or_404(Group, slug=slug)
     posts = group.groups_posts.all()
     paginator = Paginator(posts, settings.PER_PAGE_PAGINATOR)
@@ -51,7 +49,6 @@ def group_posts(request: HttpRequest, slug: str) -> HttpResponse:
 
 
 def profile(request: HttpRequest, username: str) -> HttpResponse:
-    # Страница профайла пользователя
     username = get_object_or_404(User, username=username)
     post_list = username.posts.all()
     following = username.following.exists()
@@ -70,7 +67,6 @@ def profile(request: HttpRequest, username: str) -> HttpResponse:
 
 
 def post_detail(request: HttpRequest, post_id: int) -> HttpResponse:
-    # Страница поста
     post = get_object_or_404(Post, pk=post_id)
     post_text = get_object_or_404(Post, id=post_id).text[:30]
     comments = Comment.objects.filter(post_id=post_id)
@@ -87,7 +83,6 @@ def post_detail(request: HttpRequest, post_id: int) -> HttpResponse:
 
 @authorized_only
 def post_create(request: HttpRequest) -> HttpResponse:
-    # Страница создания поста
     is_edit = False
     title = 'Добавить запись'
     form = PostForm(request.POST or None,
@@ -109,7 +104,6 @@ def post_create(request: HttpRequest) -> HttpResponse:
 
 @authorized_only
 def post_edit(request: HttpRequest, post_id: int) -> HttpResponse:
-    # Страница редактирования поста
     post = get_object_or_404(Post, id=post_id)
     author = post.author.username
     group = post.group
@@ -155,7 +149,6 @@ def add_comment(request, post_id):
 
 @authorized_only
 def follow_index(request: HttpRequest) -> HttpResponse:
-    # Страница подписки
     user = request.user
     authors = user.follower.values_list('author', flat=True)
     post_list = Post.objects.filter(author__id__in=authors)
@@ -173,7 +166,6 @@ def follow_index(request: HttpRequest) -> HttpResponse:
 
 @authorized_only
 def profile_follow(request, username):
-    # Подписаться на автора
     author = User.objects.get(username=username)
     user = request.user
     if author != user and (author.following.count() == 0):
@@ -183,7 +175,6 @@ def profile_follow(request, username):
 
 @authorized_only
 def profile_unfollow(request, username):
-    # Дизлайк, отписка
     user = request.user
     Follow.objects.get(user=user, author__username=username).delete()
     return redirect('posts:profile', username=username)
